@@ -1,0 +1,59 @@
+name: PR Title Validator
+description: Validates PR titles follow Conventional Commits using mctx-ai defaults.
+author: mctx-ai
+
+inputs:
+  scopes:
+    description: >
+      Newline-delimited list of allowed scopes. When empty (the default),
+      any scope is accepted.
+    required: false
+    default: ""
+  require-scope:
+    description: Require a scope in every PR title.
+    required: false
+    default: "false"
+  ignore-labels:
+    description: >
+      Newline-delimited list of PR labels that skip validation. When empty
+      (the default), no labels are ignored.
+    required: false
+    default: ""
+  subject-pattern:
+    description: >
+      Regex for additional subject validation. When empty (the default),
+      no subject pattern is enforced.
+    required: false
+    default: ""
+  subject-pattern-error:
+    description: >
+      Custom error message shown when subject-pattern does not match.
+      Supports {subject} and {title} placeholders.
+    required: false
+    default: ""
+
+runs:
+  using: composite
+  steps:
+    - name: Validate PR title
+      uses: amannn/action-semantic-pull-request@48f256284bd46cdaab1048c3721360e808335d50 # v6.1.1
+      env:
+        GITHUB_TOKEN: ${{ github.token }}
+      with:
+        types: |
+          feat
+          fix
+          chore
+          docs
+          refactor
+          test
+          ci
+          build
+          perf
+          style
+          revert
+        scopes: ${{ inputs.scopes }}
+        requireScope: ${{ inputs.require-scope }}
+        ignoreLabels: ${{ inputs.ignore-labels }}
+        subjectPattern: ${{ inputs.subject-pattern }}
+        subjectPatternError: ${{ inputs.subject-pattern-error }}
